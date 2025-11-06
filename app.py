@@ -42,12 +42,37 @@ st.markdown("""
     }
     .class-badge {
         display: inline-block;
-        padding: 0.5rem 1rem;
-        margin: 0.3rem;
-        border-radius: 20px;
+        padding: 0.2rem 0.4rem;
+        margin: 0.15rem;
+        border-radius: 12px;
+        font-weight: normal;
+        font-size: 0.75rem;
+        background: #f0f0f0;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    section[data-testid="stFileUploadDropzone"] {
+        padding: 3rem 2rem !important;
+        min-height: 200px !important;
+    }
+    section[data-testid="stFileUploadDropzone"] > div {
+        padding: 2rem !important;
+    }
+    .main-header {
+        font-size: 2.2rem;
         font-weight: bold;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
+        background: linear-gradient(90deg, #FF6B6B 0%, #4ECDC4 50%, #45B7D1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        padding: 0.5rem 0;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
     }
     .metric-box {
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -73,24 +98,8 @@ st.markdown("""
 #HEADER 
 st.markdown('<div class="main-header">Smart Helmet & Vehicle Detection System</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">AI-Powered Safety Compliance Monitoring with YOLOv11</div>', unsafe_allow_html=True)
-st.markdown("<h4 style='text-align:center; color:#4ECDC4;'>👨‍💻 Developed by <b>Ahmed Pasha</b></h4>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#4ECDC4; font-size:0.9rem; margin:0;'>Developed by <b>Ahmed Pasha</b></p>", unsafe_allow_html=True)
 
-
-#  CLASS INFORMATION 
-st.markdown("### 🎯 Detection Classes")
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.markdown('<div class="class-badge">✅ With Helmet</div>', unsafe_allow_html=True)
-with col2:
-    st.markdown('<div class="class-badge">❌ Without Helmet</div>', unsafe_allow_html=True)
-with col3:
-    st.markdown('<div class="class-badge">🔢 Number Plate</div>', unsafe_allow_html=True)
-with col4:
-    st.markdown('<div class="class-badge">🏍️ 2 Wheeler</div>', unsafe_allow_html=True)
-
-st.markdown("---")
-
-# LOAD MODELS
 # LOAD MODELS
 @st.cache_resource
 def load_model(model_type):
@@ -101,7 +110,6 @@ def load_model(model_type):
 
     model = YOLO(path)
     return model
-
 
 # Load both models
 model_n = load_model("YOLOv11n")
@@ -135,17 +143,7 @@ with st.sidebar.expander("💪 YOLOv11m (Medium)", expanded=True):
 
 st.sidebar.markdown("---")
 
-# Source selection
-st.sidebar.markdown("### 📥 Input Source")
-source = st.sidebar.radio(
-    "Select input type:",
-    ("📸 Image", "🎬 Video", "🎥 Webcam"),
-    label_visibility="collapsed"
-)
-source = source.split()[1]  # Extract the actual source name
-
 # Advanced settings
-st.sidebar.markdown("---")
 st.sidebar.markdown("### 🎛️ Advanced Settings")
 
 confidence_threshold = st.sidebar.slider(
@@ -165,6 +163,42 @@ show_both_models = st.sidebar.checkbox(
 
 st.sidebar.markdown("---")
 st.sidebar.info("💡 **Tip:** Use YOLOv11n for faster processing and YOLOv11m for better accuracy in critical scenarios.")
+
+# MAIN LAYOUT - Split into two columns (swapped positions)
+left_col, right_col = st.columns([1, 2])
+
+with left_col:
+    # Source selection - moved to left side
+    st.markdown("### 📥 Input Source")
+    source = st.radio(
+        "Select input type:",
+        ("📸 Image", "🎬 Video", "🎥 Webcam"),
+        label_visibility="collapsed"
+    )
+    source = source.split()[1]  # Extract the actual source name
+    
+    # Add helpful text based on selection
+    if source == "Image":
+        st.caption("📸 Select an image file to detect helmets and vehicles")
+    elif source == "Video":
+        st.caption("🎬 Upload a video for frame-by-frame analysis")
+    else:
+        st.caption("🎥 Use your webcam for real-time detection")
+
+with right_col:
+    #  CLASS INFORMATION 
+    st.markdown("### 🎯 Detection Classes")
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown('<div class="class-badge">✅ With Helmet</div>', unsafe_allow_html=True)
+    with col2:
+        st.markdown('<div class="class-badge">❌ Without Helmet</div>', unsafe_allow_html=True)
+    with col3:
+        st.markdown('<div class="class-badge">🔢 Number Plate</div>', unsafe_allow_html=True)
+    with col4:
+        st.markdown('<div class="class-badge">🏍️ 2 Wheeler</div>', unsafe_allow_html=True)
+
+st.markdown("")  # Minimal spacing
 
 #  PREDICTION FUNCTION 
 def predict_and_display(model, model_name, img, conf_threshold):
@@ -191,13 +225,14 @@ def predict_and_display(model, model_name, img, conf_threshold):
 # IMAGE MODE 
 if source == "Image":
     st.markdown("### 📸 Image Upload & Detection")
-    uploaded_file = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+    
+    # Move browse file up
+    uploaded_file = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
     
     if uploaded_file:
         img = Image.open(uploaded_file)
         
         # Display original image
-        # Show uploaded image and detection button closer together
         st.markdown("#### 🖼️ Uploaded Image")
         col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
@@ -208,7 +243,6 @@ if source == "Image":
         detect_btn = st.button("🔍 Start Detection", type="primary", use_container_width=True)
 
         if detect_btn:
-
             st.markdown("---")
             
             if show_both_models:
@@ -305,7 +339,9 @@ if source == "Image":
 # VIDEO MODE 
 elif source == "Video":
     st.markdown("### 🎬 Video Upload & Detection")
-    uploaded_video = st.file_uploader("Choose a video file", type=["mp4", "avi", "mov"], label_visibility="collapsed")
+    
+    # Move browse file up
+    uploaded_video = st.file_uploader("Choose a video file", type=["mp4", "avi", "mov"])
     
     if uploaded_video:
         tfile = tempfile.NamedTemporaryFile(delete=False)
