@@ -91,15 +91,17 @@ with col4:
 st.markdown("---")
 
 # LOAD MODELS
+# LOAD MODELS
 @st.cache_resource
 def load_model(model_type):
     if model_type == "YOLOv11n":
-        path = r"C:\Users\ahmed\Desktop\helmet detection\helmet_yolo11n\train\yolov11_noaug2\weights\best.pt"
+        path = "models/best.pt"
     else:  # YOLOv11m
-        path = r"C:\Users\ahmed\Desktop\helmet detection\helmet_yolo11n\best (1).pt" \
-        ""
+        path = "models/best (1).pt"
+
     model = YOLO(path)
     return model
+
 
 # Load both models
 model_n = load_model("YOLOv11n")
