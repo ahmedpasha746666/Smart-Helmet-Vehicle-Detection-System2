@@ -45,7 +45,7 @@ Two YOLO11 model variants were used in training:
 
 ### 1. Clone Repository
 ```bash
-git clone <your-repository-link>
+git clone 
 cd helmet-detection
 ```
 
@@ -89,11 +89,9 @@ This module will make the system fully operational for **Smart Traffic Surveilla
 
 ---
 
-## 📎 Contact
 
-**Developer:** Ahmad Pasha  
-**Role:** Data Scientist / Computer Vision Engineer  
-**Location:** India  
+
+ 
 
 ---
 
