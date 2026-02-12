@@ -45,7 +45,7 @@ Two YOLO11 model variants were used in training:
 
 ### 1. Clone Repository
 ```bash
-git clone 
+git clone https://github.com/ahmedpasha746666/Smart-Helmet-Vehicle-Detection-System2.git
 cd helmet-detection
 ```
 
